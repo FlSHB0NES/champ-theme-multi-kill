@@ -15,7 +15,12 @@ def print_events(dict):
 
     for event in dict:
         print(event['EventName'])
-        
+
+def find_event(events, eventID):
+    for event in events:
+        if(event['EventID'] == eventID):
+            return event
+
 # USER INFORMATION
 
 api_key = "RGAPI-e8615c8d-9508-4e7c-b63e-74dd8f7e3974"
@@ -24,15 +29,29 @@ summoner_name = 'FlSHBONES'
 query = 'eventdata'
 cert_path = './riot/riotgames.pem'
 
-stored_events = {}
 
-while(True):
+try:
+    stored_events = {}
 
-    # GET DATA
-    response = requests.get(('https://127.0.0.1:2999/liveclientdata/' + query), verify=cert_path)
-    events = json.loads(response.text)['Events']
+    while(True):
 
-    print_events(events)
-    
-    time.sleep(1)
+        # GET DATA
+        response = requests.get(('https://127.0.0.1:2999/liveclientdata/' + query), verify=cert_path)
+        events = json.loads(response.text)['Events']
+
+        if(len(stored_events) != len(events)):
+            num_new_events = len(events) - len(stored_events)
+
+            print(len(events) - num_new_events, ":", len(events))
+            for eventID in range(len(events) - num_new_events, len(events)):
+                event = find_event(events, eventID)
+                print(event['EventID'], event['EventName'])
+
+            stored_events = events.copy()
+
+        
+        time.sleep(1)
+
+except ConnectionError:
+    print('Game Ended')
 
