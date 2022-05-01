@@ -2,3 +2,4 @@
 
 Installations:
 pip install requests
+pip install riotwatcher
