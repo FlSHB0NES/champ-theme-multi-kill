@@ -12,7 +12,7 @@ import pprint
 
 # USER INFORMATION
 
-api_key = "RGAPI-e8615c8d-9508-4e7c-b63e-74dd8f7e3974"
+api_key = ""
 my_region = 'na1'
 summoner_name = 'FlSHBONES'
 
