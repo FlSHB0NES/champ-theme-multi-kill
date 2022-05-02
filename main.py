@@ -38,70 +38,79 @@ query = 'eventdata'
 cert_path = './riot/riotgames.pem'
 
 # PARAMETERS
-IGN = 'FlSHBONES'
-REFRESH_RATE = 0.2
-PLAY_SINGLE = False
+IGN = 'FlSHBONES'       # Summoner Name
+REFRESH_RATE = 0.2      # In Game Refresh Rate
+HP_REFRESH_RATE = 15    # Holding Pattern Refresh Rate
+SINGLE_KILL = False     # Play Audio On Single Kill
 
 stored_events = {}
+while(True):
+    try:
+        while(True):
 
-try:
-    while(True):
+            # GET DATA
+            response = requests.get(('https://127.0.0.1:2999/liveclientdata/' + query), verify=cert_path)
+            events = json.loads(response.text)['Events']
 
-        # GET DATA
-        response = requests.get(('https://127.0.0.1:2999/liveclientdata/' + query), verify=cert_path)
-        events = json.loads(response.text)['Events']
+            # IF THERE ARE NEW EVENTS
 
-        # IF THERE ARE NEW EVENTS
+            if(len(stored_events) != len(events)):
 
-        if(len(stored_events) != len(events)):
+                num_new_events = len(events) - len(stored_events) # Number of new events
 
-            num_new_events = len(events) - len(stored_events) # Number of new events
+                # ITERATES THROUGH NEW EVENTS
 
-            # PRINT NEW EVENTS
+                for eventID in range(len(events) - num_new_events, len(events)):
 
-            for eventID in range(len(events) - num_new_events, len(events)):
+                    event = find_event(events, eventID) # Get Event
+                    print(event['EventName'])
+                    
+                    # IF EVENT IS 'ChampionKill'
 
-                event = find_event(events, eventID) # Get Event
-                print(event['EventName'])
-                
-                # IF SUMMONER KILLS CHAMPION
+                    if(event['EventName'] == 'ChampionKill' and event['KillerName'] == IGN):
 
-                if(event['EventName'] == 'ChampionKill' and event['KillerName'] == IGN):
+                        next_event = find_event(events, eventID + 1) # Search for a next event
 
-                    next_event = find_event(events, eventID + 1) # Search for a next event
+                        # IF SINGLE_KILL IS TURNED ON
+                        # IF SUBSEQUENT EVENT IS A MULTI-KILL, DON'T PLAY 1ST KILL AUDIO
 
-                    # IF SUBSEQUENT EVENT IS A MULTI-KILL, DON'T PLAY 1ST KILL AUDIO
+                        if(SINGLE_KILL and (next_event == None or next_event['EventName'] != 'Multikill')):
+                            return_code = subprocess.call(["afplay", audio_file1])
+                    
+                    # IF EVENT IS 'Multikill'
 
-                    if(next_event != None and next_event['EventName'] == 'Multikill'):
-                        pass
-                    elif(PLAY_SINGLE):
-                        return_code = subprocess.call(["afplay", audio_file1])
-                
-                # IF EVENT IS MULTI-KILL
-                elif(event['EventName'] == 'Multikill' and event['KillerName'] == IGN):
+                    elif(event['EventName'] == 'Multikill' and event['KillerName'] == IGN):
 
-                    # PLAY DOUBLE KILL AUDIO
-                    if(event['KillStreak'] == 2):
-                        return_code = subprocess.call(["afplay", audio_file2])
+                        # PLAY DOUBLE KILL AUDIO
+                        if(event['KillStreak'] == 2):
+                            return_code = subprocess.call(["afplay", audio_file2])
 
-                    # PLAY TRIPLE KILL AUDIO
-                    elif(event['KillStreak'] == 3):
-                        return_code = subprocess.call(["afplay", audio_file3])
+                        # PLAY TRIPLE KILL AUDIO
+                        elif(event['KillStreak'] == 3):
+                            return_code = subprocess.call(["afplay", audio_file3])
 
-                    # PLAY QUADRA KILL AUDIO
-                    elif(event['KillStreak'] == 4):
-                        return_code = subprocess.call(["afplay", audio_file4])
-                    else:
-                        return_code = subprocess.call(["afplay", audio_file5])
-                
+                        # PLAY QUADRA KILL AUDIO
+                        elif(event['KillStreak'] == 4):
+                            return_code = subprocess.call(["afplay", audio_file4])
+                        else:
+                            return_code = subprocess.call(["afplay", audio_file5])
 
-            # UPDATE STORED EVENTS
-            stored_events = events.copy()
+                    # IF EVENT IS 'EpicMonsterKill'
+                    # AND IS STEAL
 
-        time.sleep(REFRESH_RATE)
-except ConnectionRefusedError:
-    print("No Current Game In Progress")
-except Exception as e:
-    print(e)
+                    elif(event['EventName'] == 'BaronKill' or event['EventName'] == 'DragonKill' or event['EventName'] == 'HeraldKill'):
+                        if(event['Stolen'] == "True" and event['KillerName'] == IGN):
+                            return_code = subprocess.call(["afplay", audio_file1])
+
+                    
+
+                # UPDATE STORED EVENTS
+                stored_events = events.copy()
+
+            time.sleep(REFRESH_RATE)
+    except Exception as e:
+        print(e)
+    
+    time.sleep(HP_REFRESH_RATE)
 
 
