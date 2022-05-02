@@ -6,45 +6,92 @@
 
 import requests
 import json
-from riotwatcher import LolWatcher, ApiError
-import pandas as pd
-import pprint
+import time
+import subprocess
 
-# USER INFORMATION
+# METHOD TO PRINT ALL EVENT NAMES OF GIVEN DICT
+# @PARAM dict: DICTIONARY TO PRINT
+def print_events(dict):
 
-api_key = "RGAPI-e8615c8d-9508-4e7c-b63e-74dd8f7e3974"
-my_region = 'na1'
-summoner_name = 'FlSHBONES'
+    for event in dict:
+        print(event['EventName'])
 
-print("API-key\t\t: " + api_key + "\nRegion\t\t: " + my_region + "\nSummoner\t: " + summoner_name)
+# METHOD TO FIND AN EVENT WITHIN A DICTIONARY
+# @PARAM events : DICTIONARY TO SEARCH
+# @PARAM eventID: EVENTID TO MATCH
+# @RETURN EVENT IF FOUND, ELSE RETURN FALSE
+def find_event(events, eventID):
+    for event in events:
+        if(event['EventID'] == eventID):
+            return event
+    return False
 
-try:
+# JINX AUDIO FILES
 
-    # SET UP WATCHER
-    #GET https://127.0.0.1:2999/liveclientdata/allgamedata
-    request = 
-    api_link = "https://" + my_region + ".api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summoner_name + "?api_key=" + api_key
-    watcher = LolWatcher(api_key)
+audio_file1 = "./riot/champ-theme/Jinx/get-jinxed_1.mp3" # Single Kill
+audio_file2 = "./riot/champ-theme/Jinx/get-jinxed_2.mp3" # Double Kill
+audio_file3 = "./riot/champ-theme/Jinx/get-jinxed_3.mp3" # Triple Kill
+audio_file4 = "./riot/champ-theme/Jinx/get-jinxed_4.mp3" # Quadra Kill
 
-    # GET SUMMONER INFO
-    me = watcher.summoner.by_name(my_region, summoner_name)
+query = 'eventdata'
 
-    print("\nSUMMONER INFO: ")
-    pprint.pprint(me)
+# PARAMETERS
+IGN = 'FlSHBONES'
+REFRESH_RATE = 0.2
 
-    # GET RANK
+stored_events = {}
 
-    my_ranked_stats = watcher.league.by_summoner(my_region, me['id'])
+while(True):
 
-    print("\nRANK:")
-    pprint.pprint(my_ranked_stats)
+    # GET DATA
+    response = requests.get(('https://127.0.0.1:2999/liveclientdata/' + query), verify=cert_path)
+    events = json.loads(response.text)['Events']
 
-except ApiError as err:
-    if err.response.status_code == 429:
-        print('We should retry in {} seconds.'.format(err.headers['Retry-After']))
-        print('this retry-after is handled by default by the RiotWatcher library')
-        print('future requests wait until the retry-after time passes')
-    elif err.response.status_code == 404:
-        print('Summoner with that ridiculous name not found.')
-    else:
-        raise
+    # IF THERE ARE NEW EVENTS
+
+    if(len(stored_events) != len(events)):
+
+        num_new_events = len(events) - len(stored_events) # Number of new events
+
+        # PRINT NEW EVENTS
+
+        for eventID in range(len(events) - num_new_events, len(events)):
+
+            event = find_event(events, eventID) # Get Event
+            print(event['EventName'])
+            
+            # IF SUMMONER KILLS CHAMPION
+
+            if(event['EventName'] == 'ChampionKill' and event['KillerName'] == IGN):
+
+                next_event = find_event(events, eventID) # Search for a next event
+
+                # IF SUBSEQUENT EVENT IS A MULTI-KILL, DON'T PLAY 1ST KILL AUDIO
+
+                if(next_event != False and next_event['EventName'] == 'Multikill'):
+                    pass
+                else:
+                    return_code = subprocess.call(["afplay", audio_file1])
+            
+            # IF EVENT IS MULTI-KILL
+            elif(event['EventName'] == 'Multikill' and event['KillerName'] == IGN):
+
+                # PLAY DOUBLE KILL AUDIO
+                if(event['KillStreak'] == 2):
+                    return_code = subprocess.call(["afplay", audio_file2])
+
+                # PLAY TRIPLE KILL AUDIO
+                elif(event['KillStreak'] == 3):
+                    return_code = subprocess.call(["afplay", audio_file3])
+
+                # PLAY QUADRA KILL AUDIO
+                else:
+                    return_code = subprocess.call(["afplay", audio_file4])
+            
+
+        # UPDATE STORED EVENTS
+        stored_events = events.copy()
+
+    time.sleep(REFRESH_RATE)
+
+
