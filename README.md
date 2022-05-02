@@ -1,17 +1,17 @@
-## champ-theme-multi-kill
-# Installations:
+# champ-theme-multi-kill
+## Installations:
 1. Navigate to the correct repository
 2. Install 'requests' using pip
 <pip install requests>
 
-# Set-Up
+## Set-Up
 
 go into the main.py file and set the following values:
 IGN = '[your summoner name here]'
 REFRESH_RATE = '[recommended 0.2]'
 PLAY_SINGLE = [True/False]
 
-# Run
+## Run
 
 Once in game:
 1. Navigate to the correct repository
