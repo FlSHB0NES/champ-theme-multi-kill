@@ -40,11 +40,13 @@ cert_path = './riot/riotgames.pem'
 # PARAMETERS
 IGN = 'FlSHBONES'       # Summoner Name
 REFRESH_RATE = 0.2      # In Game Refresh Rate
-HP_REFRESH_RATE = 15    # Holding Pattern Refresh Rate
+HP_REFRESH_RATE = 30    # Holding Pattern Refresh Rate
 SINGLE_KILL = False     # Play Audio On Single Kill
 
-stored_events = {}
 while(True):
+
+    stored_events = {}
+    
     try:
         while(True):
 
