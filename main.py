@@ -40,8 +40,10 @@ cert_path = './riot/riotgames.pem'
 # PARAMETERS
 IGN = 'FlSHBONES'
 REFRESH_RATE = 0.2
+PLAY_SINGLE = False
 
 stored_events = {}
+
 try:
     while(True):
 
@@ -72,7 +74,7 @@ try:
 
                     if(next_event != None and next_event['EventName'] == 'Multikill'):
                         pass
-                    else:
+                    elif(PLAY_SINGLE):
                         return_code = subprocess.call(["afplay", audio_file1])
                 
                 # IF EVENT IS MULTI-KILL
