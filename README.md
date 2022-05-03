@@ -3,6 +3,9 @@
 1. Navigate to the correct repository
 2. Install 'requests' using pip
 <pip install requests>
+<pip install numpy>
+<pip install opencv-python>
+<pip install pyautogui>
 
 ## Set-Up
 
