@@ -114,7 +114,7 @@ while(True):
         print(type(e).__name__)
     except ConnectionError as e:
         print("No Game In Progress...")
-        except KeyboardInterrupt as e:
+    except KeyboardInterrupt as e:
         print("Program Terminated")
     
 
