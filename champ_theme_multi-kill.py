@@ -110,10 +110,10 @@ while(True):
                 stored_events = events.copy()
 
             time.sleep(REFRESH_RATE)
-    except Exception as e:
-        print(type(e).__name__)
     except ConnectionError as e:
         print("No Game In Progress...")
+    except Exception as e:
+        print(type(e).__name__)
     except KeyboardInterrupt as e:
         print("Program Terminated")
     

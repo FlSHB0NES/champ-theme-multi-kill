@@ -1,11 +1,19 @@
 # champ-theme-multi-kill
-## Installations:
-1. Navigate to the correct repository
-2. Install 'requests' using pip
+## Dependancies:
+```
 <pip install requests>
+```
+```
 <pip install numpy>
+```
+
+```
 <pip install opencv-python>
+```
+
+```
 <pip install pyautogui>
+```
 
 ## Set-Up
 
@@ -18,4 +26,7 @@ PLAY_SINGLE = [True/False]
 
 Once in game:
 1. Navigate to the correct repository
-2. execute <python3 main.py>
+2. execute:
+```
+python3 main.py
+```
