@@ -25,6 +25,6 @@ PLAY_SINGLE = [True/False]
 ## Run
 1. Run Program
 ```
-python3 champ-kill-theme.py
+python3 champ-theme-multi-kill.py
 ```
 2. Start League Game
