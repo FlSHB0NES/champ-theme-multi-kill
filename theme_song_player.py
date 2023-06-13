@@ -8,6 +8,7 @@ import requests
 import json
 import time
 import subprocess
+import os
 
 # METHOD TO PRINT ALL EVENT NAMES OF GIVEN DICT
 # @PARAM dict: DICTIONARY TO PRINT
@@ -40,11 +41,14 @@ cert_path = './riot/riotgames.pem'
 # PARAMETERS
 IGN = 'FlSHBONES'       # Summoner Name
 REFRESH_RATE = 0.2      # In Game Refresh Rate
-HP_REFRESH_RATE = 30    # Holding Pattern Refresh Rate
+HP_REFRESH_RATE = 60    # Holding Pattern Refresh Rate
 SINGLE_KILL = False     # Play Audio On Single Kill
 
-while(True):
+# LAUNCH LEAGUE OF LEGENDS
+print("Launching League of Legends")
+os.system("open /Applications/'League of Legends.app'")
 
+while(True):
     stored_events = {}
     
     try:
