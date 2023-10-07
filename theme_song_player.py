@@ -9,6 +9,9 @@ import json
 import time
 import subprocess
 import os
+import sys
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # METHOD TO PRINT ALL EVENT NAMES OF GIVEN DICT
 # @PARAM dict: DICTIONARY TO PRINT
@@ -28,16 +31,18 @@ def find_event(events, eventID):
     return None
 
 # JINX AUDIO FILES
-
-audio_file1 = "./riot/champ-theme/Jinx/get-jinxed-1.mp3" # Single Kill
-audio_file2 = "./riot/champ-theme/Jinx/get-jinxed-2.mp3" # Double Kill
-audio_file3 = "./riot/champ-theme/Jinx/get-jinxed-3.mp3" # Triple Kill
-audio_file4 = "./riot/champ-theme/Jinx/get-jinxed-4.mp3" # Quadra Kill
-audio_file5 = "./riot/champ-theme/Jinx/get-jinxed-5.mp3" # Penta Kill
+audio_file1 = os.path.join(script_dir, "./riot/champ-theme/Jinx/get-jinxed-1.mp3")
+audio_file2 = os.path.join(script_dir, "./riot/champ-theme/Jinx/get-jinxed-2.mp3")
+audio_file3 = os.path.join(script_dir, "./riot/champ-theme/Jinx/get-jinxed-3.mp3")
+audio_file4 = os.path.join(script_dir, "./riot/champ-theme/Jinx/get-jinxed-4.mp3")
+audio_file5 = os.path.join(script_dir, "./riot/champ-theme/Jinx/get-jinxed-5.mp3")
 
 query = 'eventdata'
-cert_path = './riot/riotgames.pem'
-
+if getattr(sys, 'frozen', False):
+    bundle_dir = sys._MEIPASS
+else:
+    bundle_dir = os.path.dirname(os.path.abspath(__file__))
+cert_path = os.path.join(bundle_dir, 'riotgames.pem')
 # PARAMETERS
 IGN = 'FlSHBONES'       # Summoner Name
 REFRESH_RATE = 0.2      # In Game Refresh Rate
@@ -108,16 +113,13 @@ while(True):
                         if(event['Stolen'] == "True" and event['KillerName'] == IGN):
                             return_code = subprocess.call(["afplay", audio_file1])
 
-                    
-
+                return_code = subprocess.call(["afplay", audio_file1])
                 # UPDATE STORED EVENTS
                 stored_events = events.copy()
 
             time.sleep(REFRESH_RATE)
-    except ConnectionError as e:
-        print("No Game In Progress...")
     except Exception as e:
-        print(type(e).__name__)
+        print("No Game In Progress...")
     except KeyboardInterrupt as e:
         print("Program Terminated")
     
