@@ -1,4 +1,6 @@
 # Xolaani
+## Description:
+Xolaani is a unique program leveraging the powerful Riot APIs to enhance your League of Legends gaming experience. With real-time in-game event tracking, Xolaani plays corresponding segments of your champion's theme song when multi-kills are achieved!
 ## Dependancies:
 ```
 <pip install requests>
