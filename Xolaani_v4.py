@@ -58,7 +58,7 @@ else:
 cert_path = os.path.join(bundle_dir, 'riotgames.pem')
 
 # PARAMETERS
-IGN = 'FlSHBONES'       # Summoner Name
+IGN = 'Fishbones'       # Summoner Name
 REFRESH_RATE = 0.2      # In Game Refresh Rate
 HP_REFRESH_RATE = 10    # Holding Pattern Refresh Rate
 SINGLE_KILL = False     # Play Audio On Single Kill
